@@ -1,4 +1,4 @@
-/* app/globals.css (CÓDIGO COMPLETO Y FINAL) */
+/* app/globals.css (CÓDIGO FINAL DE ESTILOS) */
 
 /* --- RESET BÁSICO DE NEXT.JS --- */
 :root {
@@ -25,28 +25,25 @@ html {
   scroll-behavior: smooth;
 }
 
-/* --- ESTILOS ANDINOS PARA EMBELLECER --- */
+/* --- NUEVOS ESTILOS GRANATE, ROJO, DORADO, BLANCO --- */
 
-/* Paleta: Púrpura (#4A235A), Terracota (#E94F3A), Ocre/Pergamino (#FEF9E7) */
-
-/* 1. Estilos principales de la página */
 body {
   font-family: 'Georgia', serif; 
-  background-color: #FEF9E7; /* Fondo color crema/pergamino */
-  color: #4A235A; /* Púrpura oscuro para el texto principal */
+  background-color: #F8F8F8; /* Blanco Cremoso */
+  color: #222222; /* Negro para el texto general */
 }
 
 /* Contenedor principal para centrar el contenido */
 .main-container {
   padding: 30px 20px; 
-  max-width: 1200px; /* Ancho máximo */
-  margin: 0 auto; /* Centrar */
+  max-width: 1200px; 
+  margin: 0 auto; 
 }
 
-/* 2. Estilo para el Encabezado (H1) */
+/* Estilo para el Encabezado (H1) */
 h1 {
-  color: #8E44AD; /* Púrpura más claro */
-  border-bottom: 3px solid #E94F3A; /* Línea de terracota debajo */
+  color: #5C001F; /* Granate Oscuro */
+  border-bottom: 3px solid #A80036; /* Rojo Rubí como línea */
   padding-bottom: 10px;
   margin-bottom: 30px;
   font-size: 3rem;
@@ -54,7 +51,7 @@ h1 {
   text-align: center;
 }
 
-/* 3. Estilo para el contenedor de todas las tarjetas */
+/* Estilo para el contenedor de todas las tarjetas */
 .scores-list {
   display: grid; 
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 

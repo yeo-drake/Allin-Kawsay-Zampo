@@ -1,64 +1,40 @@
-// app/page.js (CÓDIGO COMPLETO Y FINAL)
-"use client";
-
-import { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore'; 
-import { db } from '../utils/firebase'; 
-
-import ScoreCard from './components/ScoreCard';
-
+// app/page.js (CÓDIGO FINAL DE INICIO)
+    
 export default function HomePage() {
-  const [scores, setScores] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchScores = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'partituras'));
-        const scoresList = [];
-        
-        querySnapshot.forEach((doc) => {
-          scoresList.push({
-            id: doc.id,
-            ...doc.data(),
-          });
-        });
-
-        setScores(scoresList);
-      } catch (error) {
-        console.error("Error al cargar las partituras: ", error);
-      } finally {
-        setLoading(false);
-      }
+    const containerStyle = {
+        padding: '50px 20px',
+        textAlign: 'center',
+        maxWidth: '800px',
+        margin: '0 auto',
+        minHeight: '80vh', 
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
     };
-
-    fetchScores();
-  }, []);
-
-  if (loading) {
+    
+    const titleStyle = {
+        fontSize: '3.5rem',
+        color: '#5C001F', 
+        marginBottom: '20px',
+    };
+    
+    const subtitleStyle = {
+        fontSize: '1.5rem',
+        color: '#A80036', 
+        marginBottom: '40px',
+    };
+    
     return (
-      <main className="main-container">
-        <h1>Cargando repertorio...</h1>
-      </main>
+        <main style={containerStyle}>
+            <h1 style={titleStyle}>
+                Bienvenido al Portal Oficial de C.I.A.C. Allin Kawsay Juliaca
+            </h1>
+            <p style={subtitleStyle}>
+                Un lugar para compartir nuestra música, historia y cultura.
+            </p>
+            <a href="/repertorio" style={{ color: '#FFD700', fontWeight: 'bold', fontSize: '1.2rem', textDecoration: 'none' }}>
+                Explorar el Repertorio 🎶
+            </a>
+        </main>
     );
-  }
-
-  return (
-    // ¡Añadimos la clase main-container aquí!
-    <main className="main-container"> 
-      <h1>🎺 Repertorio de Zampoñas</h1>
-      <p>Lista de canciones cargadas: {scores.length} items</p>
-      
-      <div className="scores-list">
-        {scores.map((song) => (
-          <ScoreCard 
-            key={song.id} 
-            title={song.title} 
-            rhythm={song.rhythm} 
-            imageURL={song.imageUrl}
-          />
-        ))}
-      </div>
-    </main>
-  );
 }
