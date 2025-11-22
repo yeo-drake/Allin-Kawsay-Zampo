@@ -1,7 +1,8 @@
-// app/layout.js (CÓDIGO FINAL CON BARRA DE PROGRESO)
+// app/layout.js (CÓDIGO CORREGIDO Y FINAL)
 import './globals.css';
-import Navbar from './components/Navbar'; 
-import AppProgress from './components/ProgressBar'; // <-- IMPORTAR COMPONENTE
+import AppProgress from './components/ProgressBar'; 
+import { AuthProvider } from './AuthContext'; // Solo necesitamos el Provider aquí
+import AppShell from './components/AppShell'; // <-- ¡NUEVO COMPONENTE DE CLIENTE!
 
 export const metadata = {
     title: 'C.I.A.C. Allin Kawsay', 
@@ -12,10 +13,12 @@ export default function RootLayout({ children }) {
     return (
         <html lang="es">
             <body>
-                <Navbar /> 
-                {children}
-                
-                {/* INCLUIR LA BARRA DE PROGRESO AL FINAL */}
+                <AuthProvider>
+                    {/* El AppShell ahora gestiona la Navbar y el LoginModal */}
+                    <AppShell>
+                        {children}
+                    </AppShell>
+                </AuthProvider>
                 <AppProgress /> 
             </body>
         </html>

@@ -1,4 +1,4 @@
-/* app/globals.css (CÓDIGO FINAL DE ESTILOS) */
+/* app/globals.css (CÓDIGO FINAL Y COMPLETO) */
 
 /* --- RESET BÁSICO DE NEXT.JS --- */
 :root {
@@ -25,11 +25,18 @@ html {
   scroll-behavior: smooth;
 }
 
-/* --- NUEVOS ESTILOS GRANATE, ROJO, DORADO, BLANCO --- */
+/* --- ESTILOS DE LA PALETA CIAC ALLIN KAWSAY --- */
+
+/* Paleta de colores: 
+   Granate Oscuro: #5C001F 
+   Rojo Rubí: #A80036 
+   Dorado: #FFD700 
+   Fondo: #F8F8F8 (Blanco Cremoso)
+*/
 
 body {
   font-family: 'Georgia', serif; 
-  background-color: #F8F8F8; /* Blanco Cremoso */
+  background-color: #F8F8F8; /* Fondo Blanco Cremoso */
   color: #222222; /* Negro para el texto general */
 }
 
@@ -51,14 +58,18 @@ h1 {
   text-align: center;
 }
 
-/* Estilo para el contenedor de todas las tarjetas */
-.scores-list {
-  display: grid; 
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-  gap: 30px; 
-  margin-top: 40px;
-}
-
 p {
   color: #555;
+}
+
+/* --- ESTILO DE LA CUADRÍCULA DE REPERTORIO (GRID DINÁMICO) --- */
+
+.scores-list {
+  /* Usamos Grid */
+  display: grid;
+  /* La magia: crea tantas columnas como sea posible (auto-fit) 
+     siempre que la columna tenga un ancho mínimo de 280px (minmax) */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px; /* Espacio entre tarjetas */
+  width: 100%;
 }
