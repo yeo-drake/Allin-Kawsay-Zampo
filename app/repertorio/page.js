@@ -1,4 +1,4 @@
-// app/repertorio/page.js (CÓDIGO FINAL Y CORREGIDO)
+// app/repertorio/page.js (CÓDIGO FINAL LIMPIO)
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -64,7 +64,7 @@ export default function RepertorioPage() {
             key={song.id} 
             title={song.title} 
             rhythm={song.rhythm} 
-            imageURL={song.imageUrl}
+            imageURL={song.imageUrl} // <-- ¡Verifica que el nombre coincida con Firestore!
             guideUrl={song.guideUrl} 
             onClick={() => openModal(song)}
           />

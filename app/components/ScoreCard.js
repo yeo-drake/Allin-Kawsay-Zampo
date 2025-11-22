@@ -1,4 +1,4 @@
-// app/components/ScoreCard.js (CÓDIGO FINAL Y CORREGIDO)
+// app/components/ScoreCard.js (CÓDIGO FINAL)
 
 export default function ScoreCard({ title, rhythm, imageURL, guideUrl, onClick }) { 
   
