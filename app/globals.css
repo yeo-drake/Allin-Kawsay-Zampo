@@ -1,27 +1,18 @@
+/* app/globals.css (CÓDIGO COMPLETO Y FINAL) */
+
+/* --- RESET BÁSICO DE NEXT.JS --- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
   }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -30,13 +21,47 @@ body {
   margin: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+html {
+  scroll-behavior: smooth;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* --- ESTILOS ANDINOS PARA EMBELLECER --- */
+
+/* Paleta: Púrpura (#4A235A), Terracota (#E94F3A), Ocre/Pergamino (#FEF9E7) */
+
+/* 1. Estilos principales de la página */
+body {
+  font-family: 'Georgia', serif; 
+  background-color: #FEF9E7; /* Fondo color crema/pergamino */
+  color: #4A235A; /* Púrpura oscuro para el texto principal */
+}
+
+/* Contenedor principal para centrar el contenido */
+.main-container {
+  padding: 30px 20px; 
+  max-width: 1200px; /* Ancho máximo */
+  margin: 0 auto; /* Centrar */
+}
+
+/* 2. Estilo para el Encabezado (H1) */
+h1 {
+  color: #8E44AD; /* Púrpura más claro */
+  border-bottom: 3px solid #E94F3A; /* Línea de terracota debajo */
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+  font-size: 3rem;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+/* 3. Estilo para el contenedor de todas las tarjetas */
+.scores-list {
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+  gap: 30px; 
+  margin-top: 40px;
+}
+
+p {
+  color: #555;
 }
