@@ -1,72 +1,104 @@
-// app/AuthContext.js (CÓDIGO MODIFICADO PARA COMPARTIR EL TIEMPO DE EXPIRACIÓN)
+// app/AuthContext.js (CÓDIGO FINAL LIMPIO Y CORREGIDO SIN IMPORTACIONES EN BUCLE)
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import LoginModal from './components/LoginModal';
 
+// --- CONFIGURACIÓN DE SEGURIDAD ---
+const rawPassword = process.env.NEXT_PUBLIC_PASSWORD;
+const CORRECT_PASSWORD = rawPassword ? rawPassword.trim() : null; 
+const SESSION_TIMEOUT_MINUTES = 10; 
+
+// Crear el Contexto
 const AuthContext = createContext();
 
-export const useAuth = () => useContext(AuthContext);
-
-const SESSION_DURATION = 10 * 60 * 1000; // 10 minutos
-const STORAGE_KEY = 'ciac_access_session';
+// Hook personalizado para usar la autenticación (Esta es la función que se exporta)
+export const useAuth = () => {
+    return useContext(AuthContext);
+};
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // NUEVO ESTADO: Almacenará la marca de tiempo de expiración
-  const [expiryTime, setExpiryTime] = useState(0); 
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const storedSession = localStorage.getItem(STORAGE_KEY);
-    let sessionValid = false;
-    let storedExpiry = 0;
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     
-    if (storedSession) {
-        try {
-            const sessionData = JSON.parse(storedSession);
-            storedExpiry = sessionData.expiry;
-            
-            if (
-                sessionData.token === process.env.NEXT_PUBLIC_SITE_PASSWORD &&
-                Date.now() < sessionData.expiry 
-            ) {
-                sessionValid = true;
-            } else {
-                localStorage.removeItem(STORAGE_KEY);
-            }
-        } catch (e) {
-            localStorage.removeItem(STORAGE_KEY);
+    const timerIdRef = useRef(null);
+
+    const clearTimer = () => {
+        if (timerIdRef.current) {
+            clearTimeout(timerIdRef.current);
+            timerIdRef.current = null;
         }
-    }
-    
-    setIsAuthenticated(sessionValid);
-    if (sessionValid) {
-        setExpiryTime(storedExpiry); // SOLO guarda la expiración si la sesión es válida
-    }
-    setLoading(false);
-  }, []);
+    };
 
-  const login = (password) => {
-    const isCorrect = password === process.env.NEXT_PUBLIC_SITE_PASSWORD;
+    const logout = () => {
+        setIsAuthenticated(false);
+        localStorage.removeItem('sessionExpiry');
+        clearTimer();
+    };
+
+
+    const startSessionTimer = () => {
+        clearTimer(); 
+        
+        const expiryTime = Date.now() + SESSION_TIMEOUT_MINUTES * 60 * 1000;
+        localStorage.setItem('sessionExpiry', expiryTime.toString());
+        
+        const timeoutId = setTimeout(() => {
+            logout();
+        }, SESSION_TIMEOUT_MINUTES * 60 * 1000);
+        
+        timerIdRef.current = timeoutId;
+        return timeoutId;
+    };
     
-    if (isCorrect) {
-        const newExpiryTime = Date.now() + SESSION_DURATION;
-        const sessionData = {
-            token: process.env.NEXT_PUBLIC_SITE_PASSWORD,
-            expiry: newExpiryTime
+    useEffect(() => {
+        const expiry = localStorage.getItem('sessionExpiry');
+        
+        if (expiry && Date.now() < parseInt(expiry)) {
+            setIsAuthenticated(true);
+            const remainingTime = parseInt(expiry) - Date.now();
+            
+            timerIdRef.current = setTimeout(logout, remainingTime);
+            
+        } else {
+            setIsAuthenticated(false);
+            localStorage.removeItem('sessionExpiry');
+        }
+        
+        setIsLoading(false);
+
+        return () => {
+            clearTimer();
         };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
-        setIsAuthenticated(true);
-        setExpiryTime(newExpiryTime); // <-- Actualizar el estado con el nuevo tiempo
-        return true;
-    }
-    return false;
-  };
+    }, []); 
 
-  // El contexto ahora comparte el tiempo de expiración
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, login, loading, expiryTime }}> 
-      {children}
-    </AuthContext.Provider>
-  );
+    const login = (password) => {
+        if (!CORRECT_PASSWORD) {
+            console.error("ERROR: La variable NEXT_PUBLIC_PASSWORD no está configurada.");
+            return false;
+        }
+
+        if (password.trim() === CORRECT_PASSWORD) { 
+            setIsAuthenticated(true);
+            startSessionTimer();
+            return true;
+        }
+        return false;
+    };
+
+    const value = {
+        isAuthenticated,
+        login,
+        logout,
+    };
+
+    if (isLoading) {
+        return null; 
+    }
+    
+    return (
+        <AuthContext.Provider value={value}>
+            {isAuthenticated ? children : <LoginModal />}
+        </AuthContext.Provider>
+    );
 };

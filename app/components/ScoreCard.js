@@ -1,142 +1,157 @@
-// app/components/ScoreCard.js (MODIFICADO CON VISTAS Y BOTÓN DE FAVORITOS)
+// app/components/ScoreCard.js (CÓDIGO FINAL COMPACTADO)
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useTheme } from '../ThemeContext';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
-export default function ScoreCard({ title, rhythm, imageURL, onClick, viewMode, scoreId, onToggleFavorite }) {
-    
-    // Estado local para saber si esta tarjeta está marcada como favorita
+export default function ScoreCard({ 
+    title, 
+    rhythm, 
+    imageUrl, 
+    onClick, 
+    viewMode, 
+    scoreId, 
+    onToggleFavorite 
+}) {
+    const { theme } = useTheme();
     const [isFavorite, setIsFavorite] = useState(false);
-    
-    // Verificar el estado de Favorito al cargar (desde el Local Storage)
+
+    const primaryColor = theme === 'dark' ? '#C8A952' : '#5C001F';
+    const textColor = theme === 'dark' ? '#C8A952' : '#333333';
+    const borderColor = theme === 'dark' ? '#C8A952' : '#A80036';
+    const shadowColor = theme === 'dark' ? 'rgba(200, 169, 82, 0.3)' : 'rgba(0, 0, 0, 0.1)';
+
     useEffect(() => {
         const favorites = JSON.parse(localStorage.getItem('ciac_favorites') || '[]');
         setIsFavorite(favorites.includes(scoreId));
     }, [scoreId]);
 
-    // Función para manejar el clic en el favorito
     const handleFavoriteClick = (e) => {
-        // Evitar que el clic abra el modal
         e.stopPropagation(); 
         
-        const favorites = JSON.parse(localStorage.getItem('ciac_favorites') || '[]');
+        let favorites = JSON.parse(localStorage.getItem('ciac_favorites') || '[]');
         let newFavorites;
 
         if (isFavorite) {
-            // Eliminar de favoritos
             newFavorites = favorites.filter(id => id !== scoreId);
         } else {
-            // Añadir a favoritos
             newFavorites = [...favorites, scoreId];
         }
 
         localStorage.setItem('ciac_favorites', JSON.stringify(newFavorites));
         setIsFavorite(!isFavorite);
-        
-        // Notificar a la página principal para que actualice la lista de filtrado
+
         if (onToggleFavorite) {
             onToggleFavorite();
         }
     };
-    
-    // --- Lógica de Estilos Dinámicos ---
-    const isMinimal = viewMode === 'minimal';
-    const isList = viewMode === 'compact' || isMinimal;
-    
-    // 1. Estilo base de la tarjeta
-    const cardStyle = {
-        padding: isMinimal ? '10px 15px' : '20px',
-        borderRadius: '12px',
-        boxShadow: isMinimal 
-            ? '0 1px 3px rgba(0, 0, 0, 0.1)' 
-            : '0 4px 15px rgba(0, 0, 0, 0.15)',
-        backgroundColor: 'white',
+
+
+    // === Estilos ===
+
+    // Estilos base para ambos modos
+    const cardBaseStyle = {
+        // 🚨 Compactación: Reducimos el padding
+        padding: viewMode === 'list' ? '8px 10px' : '15px', 
+        borderRadius: '10px',
         cursor: 'pointer',
-        transition: 'transform 0.2s, box-shadow 0.2s',
+        transition: 'all 0.3s ease',
         display: 'flex',
-        flexDirection: isList ? 'row' : 'column', 
-        alignItems: isList ? 'center' : 'stretch', 
-        gap: isList ? '15px' : '0',
-        borderLeft: isList ? '4px solid #FFD700' : 'none', 
-        position: 'relative', // Necesario para posicionar el icono de favorito
+        alignItems: viewMode === 'list' ? 'center' : 'stretch',
+        justifyContent: 'space-between',
+        position: 'relative',
+        // 🚨 Compactación: Reducimos la altura mínima para list
+        minHeight: viewMode === 'list' ? '40px' : '130px', 
+        gap: viewMode === 'list' ? '10px' : '15px',
     };
 
+    const cardStyle = {
+        ...cardBaseStyle,
+        backgroundColor: 'var(--color-card-bg)', 
+        color: 'var(--color-text)', 
+        border: `1px solid ${borderColor}`,
+        boxShadow: `0 3px 5px ${shadowColor}`, // Sombra ligeramente más pequeña
+    };
+
+    const listStyle = {
+        flexDirection: 'row',
+    };
+
+    const gridStyle = {
+        flexDirection: 'column',
+        textAlign: 'center',
+    };
+
+    // Estilos para la imagen
     const imageStyle = {
-        width: isList ? '50px' : '100%',
-        height: isList ? '50px' : '150px',
-        objectFit: 'cover',
-        borderRadius: isList ? '5px' : '8px',
-        display: isMinimal ? 'none' : 'block', 
-    };
-
-    const textContainerStyle = {
-        flexGrow: 1, 
-        textAlign: isList ? 'left' : 'center',
-        paddingRight: isList ? '40px' : '0', // Espacio para el icono de favorito
-    };
-
-    const titleStyle = {
-        fontSize: isList ? '1.1em' : '1.3em',
-        color: '#5C001F',
-        margin: isMinimal ? '0' : '5px 0',
-        fontWeight: 'bold',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-    };
-
-    const rhythmStyle = {
-        fontSize: isMinimal ? '0.9em' : '1em',
-        color: '#A80036',
-        margin: isMinimal ? '0' : '5px 0 0 0',
+        // 🚨 Compactación: Reducimos el tamaño de la imagen en ambos modos
+        width: viewMode === 'list' ? '40px' : '120px', 
+        height: viewMode === 'list' ? '40px' : '120px',
+        objectFit: 'contain', 
+        borderRadius: '4px',
+        marginBottom: viewMode === 'grid' ? '8px' : '0',
+        border: viewMode === 'grid' ? `1px solid ${primaryColor}` : 'none',
+        backgroundColor: theme === 'dark' ? '#16080C' : '#ffffff', 
     };
     
-    // Estilo del icono de favorito
-    const favoriteIconStyle = {
-        position: isList ? 'absolute' : 'relative',
-        top: isList ? '50%' : 'auto',
-        right: isList ? '15px' : '0',
-        transform: isList ? 'translateY(-50%)' : 'none',
-        fontSize: isList ? '24px' : '28px',
-        color: isFavorite ? '#FFD700' : '#ccc', // Dorado si es favorito
+    // Estilos del contenedor de texto
+    const textContainerStyle = {
+        flexGrow: 1,
+        textAlign: viewMode === 'list' ? 'left' : 'center',
+        marginRight: '10px',
+    };
+
+    const heartStyle = {
+        color: isFavorite ? primaryColor : (theme === 'dark' ? '#444' : '#ccc'),
+        // 🚨 Compactación: Reducimos el tamaño del corazón
+        fontSize: '1.2em', 
         cursor: 'pointer',
-        marginLeft: isList ? '0' : '10px',
-        alignSelf: isList ? 'auto' : 'flex-end',
         transition: 'color 0.2s',
-        lineHeight: 1, 
+        position: viewMode === 'grid' ? 'absolute' : 'static',
+        top: viewMode === 'grid' ? '8px' : 'auto',
+        right: viewMode === 'grid' ? '8px' : 'auto',
     };
 
 
     return (
         <div 
-            style={cardStyle} 
+            className="score-card" 
+            style={{...cardStyle, ...(viewMode === 'list' ? listStyle : gridStyle)}} 
             onClick={onClick}
-            onMouseEnter={e => e.currentTarget.style.transform = isMinimal ? 'scale(1.01)' : 'translateY(-5px)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
         >
-            {/* Contenido de la tarjeta */}
-            {!isMinimal && (
+            {/* CORAZÓN DE FAVORITO */}
+            <div onClick={handleFavoriteClick} style={heartStyle}>
+                {isFavorite ? <FaHeart /> : <FaRegHeart />}
+            </div>
+
+            {/* IMAGEN DE LA PARTITURA */}
+            {imageUrl && (
                 <img 
-                    src={imageURL || '/placeholder-min.png'}
+                    src={imageUrl} 
                     alt={`Partitura de ${title}`} 
-                    style={imageStyle}
+                    style={imageStyle} 
                 />
             )}
-            
-            <div style={textContainerStyle}>
-                <div style={titleStyle}>{title}</div>
-                {!isMinimal && <div style={rhythmStyle}>{rhythm}</div>}
-            </div>
-            
-            {/* ICONO DE FAVORITO */}
-            <span 
-                style={favoriteIconStyle} 
-                onClick={handleFavoriteClick}
-                title={isFavorite ? 'Quitar de Favoritos' : 'Añadir a Favoritos'}
-            >
-                {isFavorite ? '★' : '☆'}
-            </span>
 
+            {/* TEXTO */}
+            <div style={textContainerStyle}>
+                <h3 style={{
+                    color: primaryColor, 
+                    // 🚨 Compactación: Reducimos el tamaño de la fuente
+                    fontSize: viewMode === 'list' ? '1em' : '1.1em', 
+                    marginBottom: '3px'
+                }}>
+                    {title}
+                </h3>
+                <p style={{
+                    color: textColor, 
+                    // 🚨 Compactación: Reducimos el tamaño de la fuente
+                    fontSize: viewMode === 'list' ? '0.8em' : '0.9em'
+                }}>
+                    Ritmo: {rhythm}
+                </p>
+            </div>
         </div>
     );
 }

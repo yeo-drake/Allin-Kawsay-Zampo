@@ -1,8 +1,13 @@
-// app/components/LoginModal.js (CÓDIGO FINAL Y CORREGIDO)
+// app/components/LoginModal.js (CÓDIGO FINAL CON ESTILOS ELEGANTES)
 "use client";
 
 import { useState } from 'react';
 import { useAuth } from '../AuthContext'; 
+
+// Definición de colores elegantes
+const GRANATE_OSCURO = '#5C001F';
+const DORADO_SUAVE = '#C8A952'; 
+const TEXTO_OSCURO = '#1A1A1A';
 
 export default function LoginModal() {
     const { login } = useAuth();
@@ -20,12 +25,12 @@ export default function LoginModal() {
         }
     };
 
-    // --- Estilos para el Bloqueo ---
+    // --- Estilos Actualizados para la Elegancia ---
     const overlayStyle = {
         position: 'fixed',
         top: 0, left: 0, right: 0, bottom: 0,
-        // Fondo degradado con tus colores
-        background: 'linear-gradient(135deg, #5C001F 0%, #A80036 100%)', 
+        // Fondo con gradiente sutil de los colores primarios
+        background: `linear-gradient(135deg, ${GRANATE_OSCURO} 0%, #A80036 100%)`, 
         color: 'white',
         display: 'flex',
         flexDirection: 'column',
@@ -33,100 +38,102 @@ export default function LoginModal() {
         alignItems: 'center',
         zIndex: 9999,
         textAlign: 'center',
-        fontFamily: 'Georgia, serif', // Usar la misma fuente
-        padding: '20px', // Añadir padding general
+        fontFamily: 'Times New Roman, serif', // Usamos la fuente formal
+        padding: '20px',
     };
 
     const containerStyle = {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)', // Fondo semi-transparente
-        borderRadius: '15px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)', // Casi blanco para limpiar el aspecto
+        borderRadius: '10px', // Bordes más suaves
         padding: '30px 40px',
-        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
-        maxWidth: '450px', // Limitar el ancho
+        // Sombra sutil y elegante
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)', 
+        maxWidth: '450px',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        backdropFilter: 'blur(5px)', // Efecto de cristal esmerilado
-        border: '1px solid rgba(255, 255, 255, 0.2)', // Borde sutil
+        // Eliminamos el 'backdrop-filter: blur' para un aspecto más limpio
+        border: '1px solid rgba(0, 0, 0, 0.1)',
     };
 
     const logoStyle = {
-        width: '100px', // Tamaño del logo
-        height: '100px',
+        width: '80px', // Un poco más pequeño y enfocado
+        height: '80px',
         borderRadius: '50%',
         objectFit: 'cover',
-        marginBottom: '20px',
-        border: '3px solid #FFD700', // Borde Dorado
-        boxShadow: '0 0 15px rgba(255, 215, 0, 0.5)', // Brillo Dorado
+        marginBottom: '15px',
+        // Borde dorado suave
+        border: `3px solid ${DORADO_SUAVE}`,
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.2)',
     };
 
     const titleStyle = {
-        fontSize: '2.5em', // Tamaño del título
-        marginBottom: '10px',
-        color: '#FFD700', // Dorado
-        letterSpacing: '1px',
+        fontSize: '2.2em', // Tamaño ajustado
+        marginBottom: '5px',
+        color: GRANATE_OSCURO, // Título en color primario
+        letterSpacing: '0.5px',
+        fontWeight: 'bold',
     };
 
     const subtitleStyle = {
-        fontSize: '1.1em',
+        fontSize: '1em',
         marginBottom: '30px',
-        color: 'rgba(255, 255, 255, 0.9)',
-        lineHeight: '1.5',
+        color: TEXTO_OSCURO, // Subtítulo en texto oscuro
+        lineHeight: '1.4',
     };
 
-    // SOLUCIÓN AL ERROR: Usar propiedades de borde individuales (non-shorthand)
     const inputStyle = {
         padding: '12px 15px',
         margin: '15px 0',
-        borderRadius: '8px',
+        borderRadius: '5px', // Bordes más definidos
         
-        // Propiedades de borde individuales para evitar conflictos
-        borderWidth: '2px', 
+        borderWidth: '1px', 
         borderStyle: 'solid', 
-        borderColor: '#FFD700', // Color base del borde
+        borderColor: '#ccc', // Borde gris claro por defecto
         
-        backgroundColor: 'rgba(255, 255, 255, 0.95)', // Fondo claro para el texto
-        color: '#5C001F', // Texto Granate
-        width: '100%', // Ancho completo del contenedor
-        fontSize: '1.1em',
+        backgroundColor: 'white',
+        color: TEXTO_OSCURO,
+        width: '100%',
+        fontSize: '1em',
         outline: 'none',
         textAlign: 'center',
         transition: 'border-color 0.3s, box-shadow 0.3s',
     };
 
     const inputFocusStyle = {
-        // Solo cambiamos el color y la sombra, sin conflictos
-        borderColor: '#FFC107', // Dorado más brillante al enfocar
-        boxShadow: '0 0 10px rgba(255, 215, 0, 0.7)',
+        borderColor: DORADO_SUAVE, 
+        // Sombra suave del color de acento
+        boxShadow: `0 0 8px rgba(200, 169, 82, 0.6)`, 
     };
 
     const buttonStyle = {
         padding: '12px 25px',
-        backgroundColor: '#FFD700', // Dorado
-        color: '#5C001F', // Granate
+        backgroundColor: DORADO_SUAVE, // Botón en Dorado Suave
+        color: GRANATE_OSCURO,
         border: 'none',
-        borderRadius: '8px',
+        borderRadius: '5px',
         cursor: 'pointer',
         fontWeight: 'bold',
-        fontSize: '1.2em',
+        fontSize: '1.1em',
         marginTop: '20px',
         transition: 'background-color 0.3s, transform 0.2s',
     };
 
     const buttonHoverStyle = {
-        backgroundColor: '#FFC107', // Dorado más oscuro al pasar el ratón
-        transform: 'translateY(-2px)',
+        backgroundColor: '#D4B969', // Un tono ligeramente más claro al pasar el ratón
+        transform: 'translateY(-1px)',
     };
 
     const errorStyle = {
-        color: '#FFEBEE', // Rojo muy claro
-        backgroundColor: '#A80036', // Rojo Rubí para el fondo del error
+        color: 'white',
+        backgroundColor: '#A80036',
         padding: '8px 15px',
         borderRadius: '5px',
-        fontWeight: 'bold',
+        fontWeight: 'normal',
         marginTop: '15px',
-        fontSize: '0.95em',
+        fontSize: '0.9em',
+        border: '1px solid #FFEBEE',
     };
 
     const [isInputFocused, setInputFocused] = useState(false);
@@ -136,7 +143,7 @@ export default function LoginModal() {
         <div style={overlayStyle}>
             <div style={containerStyle}>
                 <img src="/logo.png" alt="Logo del Grupo CIAC" style={logoStyle} /> 
-                <h1 style={titleStyle}>Acceso Restringido</h1>
+                <h1 style={titleStyle}>Acceso de Miembros</h1>
                 <p style={subtitleStyle}>
                     Por favor, introduce la contraseña de acceso proporcionada por el **C.I.A.C. Allin Kawsay Juliaca**.
                 </p>
@@ -147,7 +154,6 @@ export default function LoginModal() {
                         placeholder="Contraseña Secreta"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        // Aplicar el estilo condicional corregido
                         style={isInputFocused ? {...inputStyle, ...inputFocusStyle} : inputStyle}
                         onFocus={() => setInputFocused(true)}
                         onBlur={() => setInputFocused(false)}
@@ -159,7 +165,7 @@ export default function LoginModal() {
                         onMouseEnter={() => setButtonHovered(true)}
                         onMouseLeave={() => setButtonHovered(false)}
                     >
-                        Acceder
+                        Acceder al Portal
                     </button>
                 </form>
 

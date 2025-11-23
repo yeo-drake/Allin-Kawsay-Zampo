@@ -1,50 +1,59 @@
-// app/components/ViewToggle.js
+// app/components/ViewToggle.js (CÓDIGO FINAL CON LÓGICA DE DOS BOTONES)
 "use client";
-import React from 'react';
 
-// Estilos de iconos simples (puedes usar librerías como react-icons si las instalas)
-const iconStyle = {
-    cursor: 'pointer',
-    fontSize: '24px',
-    margin: '0 5px',
-    transition: 'color 0.2s',
-};
+import { FaList, FaTh } from 'react-icons/fa'; // Usamos FaTh para la vista de cuadrícula (mediana/grande)
+import { useTheme } from '../ThemeContext';
 
-export default function ViewToggle({ viewMode, setViewMode }) {
-    
-    // Función para obtener el estilo del icono, resaltando el modo activo
-    const getIconStyle = (mode) => ({
-        ...iconStyle,
-        color: viewMode === mode ? '#A80036' : '#999', // Rojo Rubí si está activo
-        fontWeight: viewMode === mode ? 'bold' : 'normal',
-    });
+// Recibimos la nueva prop 'allowedViews'
+export default function ViewToggle({ viewMode, setViewMode, allowedViews = ['list', 'grid'] }) {
+    const { theme } = useTheme();
+
+    const buttonBaseStyle = {
+        padding: '10px 15px',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        border: '1px solid var(--color-border)',
+        transition: 'background-color 0.3s, color 0.3s',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        fontSize: '1em',
+        backgroundColor: 'var(--color-card-bg)',
+        color: 'var(--color-text)',
+        minWidth: '100px',
+        justifyContent: 'center',
+    };
+
+    const activeStyle = {
+        backgroundColor: theme === 'dark' ? '#C8A952' : '#5C001F', // Dorado o Granate
+        color: theme === 'dark' ? '#5C001F' : 'white',
+        fontWeight: 'bold',
+        borderColor: theme === 'dark' ? '#C8A952' : '#5C001F',
+    };
+
+    // Definimos las vistas y sus iconos correspondientes
+    const viewOptions = [
+        { mode: 'list', icon: FaList, label: 'Listado' },
+        { mode: 'grid', icon: FaTh, label: 'Cuadrícula' }, // Usamos 'grid' para la vista mediana
+        // Ya no incluimos 'large' aquí para simplificar a dos vistas
+    ];
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '15px' }}>
-            <span 
-                style={getIconStyle('grid')}
-                onClick={() => setViewMode('grid')}
-                title="Vista de Cuadrícula (Grande)"
-            >
-                {/* Ícono de 4 cuadrados */}
-                &#9638;
-            </span>
-            <span 
-                style={getIconStyle('compact')}
-                onClick={() => setViewMode('compact')}
-                title="Vista de Lista Compacta"
-            >
-                {/* Ícono de lista con imagen pequeña */}
-                &#9776;
-            </span>
-            <span 
-                style={getIconStyle('minimal')}
-                onClick={() => setViewMode('minimal')}
-                title="Lista Minimalista (Solo Texto)"
-            >
-                {/* Ícono de solo líneas */}
-                &#9779;
-            </span>
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            {viewOptions
+                // 🚨 FILTRADO CLAVE: Solo renderizamos los botones que están permitidos
+                .filter(option => allowedViews.includes(option.mode))
+                .map(({ mode, icon: Icon, label }) => (
+                    <button
+                        key={mode}
+                        onClick={() => setViewMode(mode)}
+                        style={{ ...buttonBaseStyle, ...(viewMode === mode ? activeStyle : {}) }}
+                    >
+                        <Icon />
+                        {label}
+                    </button>
+                ))
+            }
         </div>
     );
 }

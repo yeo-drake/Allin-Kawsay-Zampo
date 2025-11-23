@@ -1,76 +1,140 @@
-// app/components/SessionTimer.js (NUEVO COMPONENTE DE CUENTA REGRESIVA)
+// app/components/SessionTimer.js (CÓDIGO CORREGIDO Y ESTABILIZADO)
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../AuthContext'; 
 
+// Colores del tema
+const GRANATE_OSCURO = '#5C001F';
+const DORADO_SUAVE = '#C8A952'; 
+const ROJO_ALERTA = '#A80036';
+
+// Duración total de la sesión (10 minutos)
+const SESSION_TIMEOUT_MINUTES = 10;
+const TOTAL_DURATION_MS = SESSION_TIMEOUT_MINUTES * 60 * 1000; 
+
 export default function SessionTimer() {
-    const { expiryTime, isAuthenticated } = useAuth();
-    const [timeLeft, setTimeLeft] = useState(0);
+    const { logout } = useAuth();
+    const [remainingTime, setRemainingTime] = useState(0);
+    const [progress, setProgress] = useState(100);
+    const intervalRef = useRef(null);
 
-    // 1. Lógica del Temporizador: Calcula el tiempo restante cada segundo
     useEffect(() => {
-        if (!isAuthenticated || expiryTime === 0) return;
-
-        // Función que calcula el tiempo restante
-        const calculateTimeLeft = () => {
-            const difference = expiryTime - Date.now();
-            return difference > 0 ? difference : 0;
-        };
-        
-        // Establecer el tiempo inicial
-        setTimeLeft(calculateTimeLeft());
-
-        // Configurar el intervalo que se ejecuta cada segundo
-        const timer = setInterval(() => {
-            const newTimeLeft = calculateTimeLeft();
-            setTimeLeft(newTimeLeft);
-
-            // Si el tiempo llega a cero, forzamos la recarga para que el AuthContext
-            // detecte que la sesión ha expirado y muestre el LoginModal
-            if (newTimeLeft === 0) {
-                clearInterval(timer);
-                // Si la sesión expira mientras está abierto, recarga la página
-                window.location.reload(); 
+        const calculateTime = () => {
+            const expiry = localStorage.getItem('sessionExpiry');
+            
+            if (!expiry) {
+                logout(); 
+                if (intervalRef.current) clearInterval(intervalRef.current);
+                return 0;
             }
-        }, 1000);
 
-        // Limpieza: importante para evitar fugas de memoria
-        return () => clearInterval(timer);
-    }, [isAuthenticated, expiryTime]);
+            const now = Date.now();
+            const expiryTime = parseInt(expiry);
+            let timeDiff = expiryTime - now;
+
+            if (timeDiff <= 0) {
+                logout();
+                if (intervalRef.current) clearInterval(intervalRef.current);
+                return 0;
+            }
+            
+            // P-2 CORRECCIÓN CLAVE: Estabilizamos el progreso inicial.
+            // Si el tiempo restante es muy cercano (menos de 1 segundo) al total, 
+            // lo forzamos al 100% para asegurar que la barra inicie llena.
+            let currentProgress;
+            
+            if (timeDiff >= TOTAL_DURATION_MS - 1000) { 
+                currentProgress = 100;
+            } else {
+                currentProgress = (timeDiff / TOTAL_DURATION_MS) * 100;
+            }
+            
+            setRemainingTime(timeDiff);
+            setProgress(Math.min(100, Math.max(0, currentProgress))); 
+        };
+
+        calculateTime();
+        intervalRef.current = setInterval(calculateTime, 1000); 
+
+        return () => clearInterval(intervalRef.current);
+    }, [logout]);
 
 
-    // 2. Lógica de Formato: Convierte milisegundos a M:SS
+    // Formatear milisegundos a HH:MM:SS
     const formatTime = (ms) => {
         const totalSeconds = Math.floor(ms / 1000);
-        const minutes = Math.floor(totalSeconds / 60);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
         
-        // Asegura que los segundos siempre tengan dos dígitos (ej: 05)
-        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        const pad = (num) => String(num).padStart(2, '0');
+        return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
     };
 
-    // Estilo para el temporizador
-    const timerStyle = {
+    // --- Estilos del Temporizador ---
+    
+    const timerContainerStyle = {
         position: 'fixed',
-        top: '60px', /* Justo debajo de la Navbar (asumiendo altura de 60px) */
+        bottom: '20px',
         right: '20px',
-        backgroundColor: timeLeft < 1 * 60 * 1000 ? '#A80036' : '#5C001F', /* Rojo si queda menos de 1 min */
-        color: 'white',
-        padding: '5px 10px',
-        borderRadius: '5px',
-        fontSize: '0.9em',
-        fontWeight: 'bold',
-        zIndex: 999, /* Alto para que esté siempre visible */
-        boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+        width: '250px', 
+        zIndex: 9995, 
+        backgroundColor: 'white',
+        borderRadius: '8px',
+        padding: '10px 15px',
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)', 
+        border: `1px solid ${GRANATE_OSCURO}`,
+        textAlign: 'center',
+        opacity: progress < 5 ? 0.7 : 1, 
     };
     
-    // Solo mostramos el timer si queda tiempo
-    if (timeLeft === 0) return null;
+    const progressBarContainer = {
+        height: '10px',
+        backgroundColor: '#eee',
+        borderRadius: '5px',
+        marginBottom: '8px',
+        overflow: 'hidden',
+    };
+
+    const barColor = progress < 10 ? ROJO_ALERTA : DORADO_SUAVE;
+    
+    const progressBar = {
+        height: '100%',
+        width: `${progress}%`,
+        backgroundColor: barColor,
+        transition: 'width 1s linear, background-color 0.5s',
+    };
+
 
     return (
-        <div style={timerStyle}>
-            Sesión expira en: {formatTime(timeLeft)}
+        <div style={timerContainerStyle}>
+            <div style={{color: GRANATE_OSCURO, fontWeight: 'bold', marginBottom: '5px'}}>
+                Tiempo Restante de Sesión
+            </div>
+            
+            <div style={progressBarContainer}>
+                <div style={progressBar}></div>
+            </div>
+            
+            <div style={{color: GRANATE_OSCURO, fontSize: '1.2em'}}>
+                {formatTime(remainingTime)}
+            </div>
+            
+            <button 
+                onClick={logout} 
+                style={{
+                    marginTop: '10px', 
+                    padding: '5px 10px', 
+                    backgroundColor: GRANATE_OSCURO, 
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                }}
+            >
+                Cerrar Sesión
+            </button>
         </div>
     );
 }
