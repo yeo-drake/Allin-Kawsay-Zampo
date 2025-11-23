@@ -144,7 +144,7 @@ export default function ScoreModal({ score, onClose }) {
                         
                         {/* 🚨 BLOQUE DE MARCA DE AGUA ELIMINADO 🚨 */}
 
-                        <img 
+                        <iframe
                             src={score.imageUrl} 
                             alt={`Imagen de ${score.title}`} 
                             style={imageStyle}
