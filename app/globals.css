@@ -1,81 +1,41 @@
-/* app/globals.css (CÓDIGO FINAL Y COMPLETO) */
+/* app/globals.css */
 
-/* --- RESET BÁSICO DE NEXT.JS --- */
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+/* --- 1. Reset Básico y Modelo de Caja (Fundamental) --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box; /* Asegura que el padding y el borde no afecten el ancho y alto total */
 }
 
-/* Restablecer margen y padding */
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+html, body {
+    margin: 0;
+    padding: 0;
+    /* La fuente y el fondo se definen en app/layout.js */
 }
 
-html {
-  scroll-behavior: smooth;
+/* ------------------------------------------------ */
+/* --- 2. Estilos para la barra de desplazamiento (Scrollbar) --- */
+/* ------------------------------------------------ */
+
+/* Solo se aplica al elemento que tenga la clase scrollable-navbar */
+.scrollable-navbar::-webkit-scrollbar {
+  height: 6px; /* Altura de la barra de desplazamiento */
 }
 
-/* --- ESTILOS DE LA PALETA CIAC ALLIN KAWSAY --- */
-
-/* Paleta de colores: 
-   Granate Oscuro: #5C001F 
-   Rojo Rubí: #A80036 
-   Dorado: #FFD700 
-   Fondo: #F8F8F8 (Blanco Cremoso)
-*/
-
-body {
-  font-family: 'Georgia', serif; 
-  background-color: #F8F8F8; /* Fondo Blanco Cremoso */
-  color: #222222; /* Negro para el texto general */
+.scrollable-navbar::-webkit-scrollbar-track {
+  /* Fondo muy claro del área por donde se desliza la barra */
+  background: rgba(255, 255, 255, 0.1); 
 }
 
-/* Contenedor principal para centrar el contenido */
-.main-container {
-  padding: 30px 20px; 
-  max-width: 1200px; 
-  margin: 0 auto; 
+.scrollable-navbar::-webkit-scrollbar-thumb {
+  /* El color Dorado Suave (#C8A952) */
+  background-color: #C8A952; 
+  border-radius: 3px; 
+  /* Borde pequeño del color primario */
+  border: 1px solid #5C001F; 
 }
 
-/* Estilo para el Encabezado (H1) */
-h1 {
-  color: #5C001F; /* Granate Oscuro */
-  border-bottom: 3px solid #A80036; /* Rojo Rubí como línea */
-  padding-bottom: 10px;
-  margin-bottom: 30px;
-  font-size: 3rem;
-  letter-spacing: 1px;
-  text-align: center;
-}
-
-p {
-  color: #555;
-}
-
-/* --- ESTILO DE LA CUADRÍCULA DE REPERTORIO Y MODOS DE VISTA --- */
-
-/* Base: MODO GRID (se aplica a .scores-list-grid) */
-.scores-list {
-  display: grid;
-  /* Crea tantas columnas como sea posible, con un ancho mínimo de 280px */
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px; /* Espacio entre tarjetas */
-  width: 100%;
-}
-
-/* 2. MODO LISTA COMPACTA (Clase: scores-list-compact) */
-.scores-list-compact {
-    /* Mantiene dos columnas en pantallas grandes */
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 15px; /* Menos espacio entre ítems */
-}
-
-/* 3. MODO LISTA MINIMALISTA (Clase: scores-list-minimal) */
-.scores-list-minimal {
-    /* Una sola columna de ancho completo */
-    grid-template-columns: 1fr; 
-    gap: 8px; /* Espacio mínimo */
-}
+/* ------------------------------------------------ */
+/* --- 3. Animaciones o estilos para modales (Opcional, si se agregan más tarde) --- */
+/* ------------------------------------------------ */
+/* Por ahora, este espacio queda vacío, pero puedes añadir más CSS global aquí */

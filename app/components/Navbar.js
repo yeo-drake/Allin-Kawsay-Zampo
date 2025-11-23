@@ -1,13 +1,16 @@
-// app/components/Navbar.js (CÓDIGO FINAL CON SCROLL HORIZONTAL PARA MÓVILES)
+// app/components/Navbar.js (CÓDIGO FINAL CON LOGO Y SCROLLBAR CORREGIDO)
 "use client";
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+// Definición del nuevo acento de color
+const DORADO_SUAVE = '#C8A952'; 
+const GRANATE_OSCURO = '#5C001F';
+
 export default function Navbar() {
     const pathname = usePathname();
 
-    // LISTA COMPLETA DE ENLACES
     const links = [
         { href: '/', label: 'Inicio' },
         { href: '/historia', label: 'Historia' },
@@ -18,43 +21,73 @@ export default function Navbar() {
 
     const navbarStyle = {
         // Esta es la barra principal (el fondo granate)
-        padding: '15px 0', // Ajustamos padding horizontal para no cortar el scroll
-        backgroundColor: '#5C001F', 
-        boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
+        backgroundColor: GRANATE_OSCURO, 
+        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)',
+        padding: '0 0 0 0', // Eliminamos padding general para controlarlo internamente
     };
     
-    // NUEVO CONTENEDOR PARA EL SCROLL
-    const navContainerStyle = {
-        // Permite el desplazamiento horizontal cuando el contenido es demasiado ancho
-        overflowX: 'auto', 
-        // Evita que los enlaces salten a la siguiente línea
-        whiteSpace: 'nowrap', 
-        // Hacemos que el contenido interno sea flexible para que los links estén alineados
+    // Contenedor principal para el logo y la barra de navegación
+    const headerContainerStyle = {
         display: 'flex',
-        justifyContent: 'center', // Centra los enlaces si hay espacio
+        alignItems: 'center',
+        justifyContent: 'space-between', // Para separar logo de enlaces
+        padding: '10px 20px',
+        borderBottom: `1px solid ${DORADO_SUAVE}55`, // Separador sutil
+    };
+
+    const logoStyle = {
+        width: '50px', 
+        height: '50px',
+        borderRadius: '50%',
+        objectFit: 'cover',
+        border: `2px solid ${DORADO_SUAVE}`,
+    };
+
+    // CONTENEDOR DE SCROLL HORIZONTAL
+    const navContainerStyle = {
+        overflowX: 'auto', 
+        whiteSpace: 'nowrap', 
+        display: 'flex',
         alignItems: 'center',
         gap: '25px',
-        padding: '0 20px', // Padding horizontal para que los bordes no se peguen a la pantalla
+        padding: '10px 20px', // Padding arriba y abajo para separar del logo
+        justifyContent: 'center', // Para centrar los links si caben
     };
 
     const linkStyle = (href) => ({
-        // Es importante usar 'display: inline-block' en los links dentro de un white-space: nowrap
         display: 'inline-block', 
-        color: pathname === href ? '#FFD700' : 'white',
+        color: pathname === href ? DORADO_SUAVE : 'white',
         textDecoration: 'none',
         fontSize: '1.1em',
         fontWeight: pathname === href ? 'bold' : 'normal',
         padding: '5px 10px',
         borderRadius: '5px',
         transition: 'color 0.2s, border-bottom 0.2s',
-        borderBottom: pathname === href ? '2px solid #FFD700' : 'none',
-        // Aseguramos que los links tengan un tamaño fijo para el scroll
+        borderBottom: pathname === href ? `2px solid ${DORADO_SUAVE}` : 'none', 
         flexShrink: 0, 
     });
 
     return (
         <nav style={navbarStyle}>
-            <div style={navContainerStyle}> 
+            {/* SECCIÓN SUPERIOR CON LOGO */}
+            <div style={headerContainerStyle}>
+                <Link href="/">
+                    {/* El logo se vuelve un enlace a Inicio */}
+                    <img 
+                        src="/logo.png" 
+                        alt="Logo CIAC Allin Kawsay" 
+                        style={logoStyle} 
+                    />
+                </Link>
+                {/* Puedes poner el botón de Logout aquí si quieres */}
+                <div style={{color: DORADO_SUAVE}}>
+                    {/* {auth.isAuthenticated && <LogoutButton />} */}
+                </div>
+            </div>
+
+            {/* SECCIÓN INFERIOR SCROLLABLE (Menú) */}
+            {/* AGREGAMOS LA CLASE scrollable-navbar para el estilo CSS global */}
+            <div style={navContainerStyle} className="scrollable-navbar"> 
                 {links.map((link) => (
                     <Link key={link.href} href={link.href} style={linkStyle(link.href)}>
                         {link.label}
