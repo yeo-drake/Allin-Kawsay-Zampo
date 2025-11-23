@@ -1,10 +1,9 @@
-// app/components/Navbar.js (CÓDIGO FINAL CON LOGO Y SCROLLBAR CORREGIDO)
+// app/components/Navbar.js (CÓDIGO FINAL: ENCABEZADO FIJO Y APILADO)
 "use client";
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-// Definición del nuevo acento de color
 const DORADO_SUAVE = '#C8A952'; 
 const GRANATE_OSCURO = '#5C001F';
 
@@ -20,38 +19,44 @@ export default function Navbar() {
     ];
 
     const navbarStyle = {
-        // Esta es la barra principal (el fondo granate)
+        // --- Hacemos todo el encabezado FIJO ---
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 9990, // Se mantiene siempre encima
         backgroundColor: GRANATE_OSCURO, 
-        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.3)',
-        padding: '0 0 0 0', // Eliminamos padding general para controlarlo internamente
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.5)',
     };
     
-    // Contenedor principal para el logo y la barra de navegación
+    // Contenedor principal para el logo (ahora centrado)
     const headerContainerStyle = {
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between', // Para separar logo de enlaces
+        // Centramos el logo horizontalmente
+        justifyContent: 'center', 
         padding: '10px 20px',
-        borderBottom: `1px solid ${DORADO_SUAVE}55`, // Separador sutil
     };
 
     const logoStyle = {
-        width: '50px', 
-        height: '50px',
+        width: '60px', // Un poco más grande
+        height: '60px',
         borderRadius: '50%',
         objectFit: 'cover',
-        border: `2px solid ${DORADO_SUAVE}`,
+        border: `3px solid ${DORADO_SUAVE}`, 
     };
 
-    // CONTENEDOR DE SCROLL HORIZONTAL
+    // CONTENEDOR DE SCROLL HORIZONTAL (Menú)
     const navContainerStyle = {
         overflowX: 'auto', 
         whiteSpace: 'nowrap', 
         display: 'flex',
         alignItems: 'center',
+        // FIX VISIBILIDAD: Alineamos a la izquierda (flex-start) para que "Inicio" sea visible
+        justifyContent: 'flex-start', 
         gap: '25px',
-        padding: '10px 20px', // Padding arriba y abajo para separar del logo
-        justifyContent: 'center', // Para centrar los links si caben
+        padding: '10px 20px', 
+        borderTop: `1px solid ${DORADO_SUAVE}55`, // Separador visual
     };
 
     const linkStyle = (href) => ({
@@ -69,24 +74,18 @@ export default function Navbar() {
 
     return (
         <nav style={navbarStyle}>
-            {/* SECCIÓN SUPERIOR CON LOGO */}
+            {/* 1. SECCIÓN SUPERIOR: LOGO CENTRADO */}
             <div style={headerContainerStyle}>
                 <Link href="/">
-                    {/* El logo se vuelve un enlace a Inicio */}
                     <img 
                         src="/logo.png" 
                         alt="Logo CIAC Allin Kawsay" 
                         style={logoStyle} 
                     />
                 </Link>
-                {/* Puedes poner el botón de Logout aquí si quieres */}
-                <div style={{color: DORADO_SUAVE}}>
-                    {/* {auth.isAuthenticated && <LogoutButton />} */}
-                </div>
             </div>
 
-            {/* SECCIÓN INFERIOR SCROLLABLE (Menú) */}
-            {/* AGREGAMOS LA CLASE scrollable-navbar para el estilo CSS global */}
+            {/* 2. SECCIÓN INFERIOR: MENÚ SCROLLABLE */}
             <div style={navContainerStyle} className="scrollable-navbar"> 
                 {links.map((link) => (
                     <Link key={link.href} href={link.href} style={linkStyle(link.href)}>
