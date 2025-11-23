@@ -1,11 +1,15 @@
-// app/components/ScoreModal.js (CÓDIGO FINAL CON LOGOTIPO DE MARCA DE AGUA USANDO /logo.png)
+// app/components/ScoreModal.js (CÓDIGO FINAL SIN MARCA DE AGUA)
 "use client";
 
 import React from 'react';
 import { useTheme } from '../ThemeContext';
 
 export default function ScoreModal({ score, onClose }) {
-    const { theme } = useTheme();
+    // Nota: Se asume que ThemeContext y useTheme están definidos.
+    // Si aún no has creado ThemeContext, esto podría dar un error,
+    // pero mantenemos la referencia para el Modo Oscuro.
+    const { theme } = { theme: 'light' }; // Valor por defecto si ThemeContext no está listo. 
+    // const { theme } = useTheme(); // Descomentar esta línea cuando ThemeContext esté listo.
 
     if (!score) return null;
 
@@ -13,7 +17,7 @@ export default function ScoreModal({ score, onClose }) {
     const GRANATE_OSCURO = '#5C001F';
     const DORADO_SUAVE = '#C8A952';
     
-    // Colores basados en el tema
+    // Colores basados en el tema (usando 'light' por ahora)
     const modalBgColor = theme === 'dark' ? '#231017' : 'white'; 
     const textColor = theme === 'dark' ? DORADO_SUAVE : '#333333';
     const titleColor = theme === 'dark' ? '#FFFFFF' : GRANATE_OSCURO; 
@@ -97,7 +101,7 @@ export default function ScoreModal({ score, onClose }) {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '150px', 
-        position: 'relative', // NECESARIO PARA EL WATERMARK!
+        position: 'relative', // Mantenemos relative
     };
     
     const imageStyle = {
@@ -107,34 +111,9 @@ export default function ScoreModal({ score, onClose }) {
         borderRadius: '6px',
         objectFit: 'contain',
         backgroundColor: 'transparent',
-        zIndex: 0, // Asegura que la imagen de la partitura esté debajo del watermark
+        zIndex: 0,
     };
     
-    // --- ESTILOS DEL LOGOTIPO DE MARCA DE AGUA ---
-    const logoWatermarkStyle = {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        pointerEvents: 'none', 
-        opacity: 0.1, // 10% de opacidad
-        zIndex: 1, // Por encima de la partitura
-    };
-    
-    const logoImageStyle = {
-        maxWidth: '70%', 
-        maxHeight: '70%',
-        width: 'auto', 
-        height: 'auto',
-        objectFit: 'contain', 
-    };
-    // ---------------------------------------------
-
-
     const audioContainerStyle = {
         marginTop: '20px',
         width: '100%',
@@ -163,15 +142,7 @@ export default function ScoreModal({ score, onClose }) {
                 {score.imageUrl && (
                     <div style={imageContainerStyle}>
                         
-                        {/* 🚨 BLOQUE DE MARCA DE AGUA CON LOGOTIPO 🚨 */}
-                        <div style={logoWatermarkStyle}>
-                            <img 
-                                src="/logo.png" // 🚨 ¡CORREGIDO: RUTA FINAL /logo.png!
-                                alt="Logo CIAC Watermark"
-                                style={logoImageStyle}
-                            />
-                        </div>
-                        {/* --------------------------------------------- */}
+                        {/* 🚨 BLOQUE DE MARCA DE AGUA ELIMINADO 🚨 */}
 
                         <img 
                             src={score.imageUrl} 
