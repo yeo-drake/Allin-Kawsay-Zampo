@@ -7,14 +7,7 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
+/* Restablecer margen y padding */
 * {
   box-sizing: border-box;
   padding: 0;
@@ -62,14 +55,27 @@ p {
   color: #555;
 }
 
-/* --- ESTILO DE LA CUADRÍCULA DE REPERTORIO (GRID DINÁMICO) --- */
+/* --- ESTILO DE LA CUADRÍCULA DE REPERTORIO Y MODOS DE VISTA --- */
 
+/* Base: MODO GRID (se aplica a .scores-list-grid) */
 .scores-list {
-  /* Usamos Grid */
   display: grid;
-  /* La magia: crea tantas columnas como sea posible (auto-fit) 
-     siempre que la columna tenga un ancho mínimo de 280px (minmax) */
+  /* Crea tantas columnas como sea posible, con un ancho mínimo de 280px */
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 25px; /* Espacio entre tarjetas */
   width: 100%;
+}
+
+/* 2. MODO LISTA COMPACTA (Clase: scores-list-compact) */
+.scores-list-compact {
+    /* Mantiene dos columnas en pantallas grandes */
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 15px; /* Menos espacio entre ítems */
+}
+
+/* 3. MODO LISTA MINIMALISTA (Clase: scores-list-minimal) */
+.scores-list-minimal {
+    /* Una sola columna de ancho completo */
+    grid-template-columns: 1fr; 
+    gap: 8px; /* Espacio mínimo */
 }

@@ -1,19 +1,19 @@
-// app/components/AppShell.js (NUEVO ARCHIVO)
+// app/components/AppShell.js (CÓDIGO FINAL CON TEMPORIZADOR)
 "use client";
 
 import { useAuth } from "../AuthContext";
 import Navbar from "./Navbar";
 import LoginModal from "./LoginModal";
-import React from 'react'; // Necesario para componentes de cliente
+import SessionTimer from "./SessionTimer"; // <-- Importamos el Timer
+import React from 'react'; 
 
 export default function AppShell({ children }) {
     const { isAuthenticated, loading } = useAuth();
 
     // 1. Mostrar spinner mientras cargamos Local Storage
     if (loading) {
-        // En un entorno de producción, puedes poner un spinner visible aquí
         return (
-            <div style={{textAlign: 'center', padding: '50px'}}>
+            <div style={{textAlign: 'center', padding: '50px', color: '#5C001F'}}>
                 Cargando configuración de acceso...
             </div>
         ); 
@@ -28,6 +28,7 @@ export default function AppShell({ children }) {
     return (
         <>
             <Navbar />
+            <SessionTimer /> {/* <-- El temporizador se renderiza aquí */}
             {children}
         </>
     );
