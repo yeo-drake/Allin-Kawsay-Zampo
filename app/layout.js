@@ -1,18 +1,19 @@
-// app/layout.js (INTEGRACIÓN DEL THEME PROVIDER)
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from './AuthContext'; 
-// P-3: Importar el ThemeProvider
 import { ThemeProvider } from './ThemeContext'; 
 import Navbar from './components/Navbar';
 import SessionTimer from './components/SessionTimer'; 
 import { Suspense } from 'react';
+import InstallPrompt from './components/InstallPrompt'; // 🚨 Nuevo Import PWA
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "CIAC Portal Privado",
   description: "Portal privado de partituras y recursos para la Corporación Internacional de Artes CIAC Allin Kawsay.",
+  // 🚨 Integración del MANIFEST PWA 🚨
+  manifest: '/manifest.json', 
 };
 
 // Componente para manejar el estado de la cabecera
@@ -41,6 +42,9 @@ export default function RootLayout({ children }) {
         <ThemeProvider> 
           <AuthProvider>
             <LayoutContent>{children}</LayoutContent>
+            {/* 🚨 Integración del banner de instalación PWA (P-9) 🚨
+                Se coloca fuera de LayoutContent para que flote sobre la UI. */}
+            <InstallPrompt />
           </AuthProvider>
         </ThemeProvider>
       </body>
