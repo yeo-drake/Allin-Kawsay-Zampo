@@ -1,31 +1,23 @@
-// app/components/ScoreModal.js (CÓDIGO FINAL SIN MARCA DE AGUA)
+// app/components/ScoreModal.js
+
 "use client";
 
 import React from 'react';
-import { useTheme } from '../ThemeContext';
+// Ya no necesitamos importar 'react-pdf', solo 'React'.
 
 export default function ScoreModal({ score, onClose }) {
-    // Nota: Se asume que ThemeContext y useTheme están definidos.
-    // Si aún no has creado ThemeContext, esto podría dar un error,
-    // pero mantenemos la referencia para el Modo Oscuro.
-    const { theme } = { theme: 'light' }; // Valor por defecto si ThemeContext no está listo. 
-    // const { theme } = useTheme(); // Descomentar esta línea cuando ThemeContext esté listo.
+    
+    // --- Lógica del tema (manteniendo el placeholder del usuario) ---
+    // Si usas un contexto de tema real, puedes descomentar la importación y la línea de abajo.
+    const { theme } = { theme: 'light' }; 
+    // const { theme } = useTheme(); 
 
     if (!score) return null;
-
-    // --- Definición de Colores ---
-    const GRANATE_OSCURO = '#5C001F';
-    const DORADO_SUAVE = '#C8A952';
     
-    // Colores basados en el tema (usando 'light' por ahora)
-    const modalBgColor = theme === 'dark' ? '#231017' : 'white'; 
-    const textColor = theme === 'dark' ? DORADO_SUAVE : '#333333';
-    const titleColor = theme === 'dark' ? '#FFFFFF' : GRANATE_OSCURO; 
-    const closeButtonBg = theme === 'dark' ? DORADO_SUAVE : GRANATE_OSCURO;
-    const closeButtonColor = theme === 'dark' ? GRANATE_OSCURO : 'white';
+    // --- Lógica para determinar si es PDF o no (USAREMOS IFRAME PARA PDF) ---
+    const isPdf = score.imageUrl && score.imageUrl.toLowerCase().endsWith('.pdf');
 
-
-    // --- Lógica para determinar el tipo de reproductor ---
+    // --- Lógica para YouTube/Audio (Mantenida) ---
     const getEmbedUrl = (url) => {
         if (!url) return null;
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -41,7 +33,17 @@ export default function ScoreModal({ score, onClose }) {
     const isDirectAudio = score.guideUrl && !youtubeEmbedUrl;
 
 
-    // 🚨 DEFINICIÓN DE ESTILOS (TODOS NECESARIOS) 🚨
+    // --- DEFINICIÓN DE ESTILOS (Mantenidos) ---
+    const GRANATE_OSCURO = '#5C001F';
+    const DORADO_SUAVE = '#C8A952';
+    
+    const modalBgColor = theme === 'dark' ? '#231017' : 'white'; 
+    const textColor = theme === 'dark' ? DORADO_SUAVE : '#333333';
+    const titleColor = theme === 'dark' ? '#FFFFFF' : GRANATE_OSCURO; 
+    const closeButtonBg = theme === 'dark' ? DORADO_SUAVE : GRANATE_OSCURO;
+    const closeButtonColor = theme === 'dark' ? GRANATE_OSCURO : 'white';
+
+
     const overlayStyle = {
         position: 'fixed',
         top: 0,
@@ -81,6 +83,7 @@ export default function ScoreModal({ score, onClose }) {
         backgroundColor: closeButtonBg,
         color: closeButtonColor,
         fontSize: '1.2em',
+        zIndex: 10,
     };
 
     const titleStyle = {
@@ -89,31 +92,34 @@ export default function ScoreModal({ score, onClose }) {
         paddingBottom: '10px',
         marginBottom: '20px',
     };
-
-    const imageContainerStyle = {
+    
+    // Estilos Base para el contenedor del PDF/Imagen
+    const baseMediaContainerStyle = {
         textAlign: 'center',
         marginBottom: '20px',
         border: `1px solid ${theme === 'dark' ? DORADO_SUAVE : '#ccc'}`,
-        padding: '5px',
         borderRadius: '8px',
         backgroundColor: theme === 'dark' ? '#16080C' : '#f9f9f9',
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '150px', 
-        position: 'relative', // Mantenemos relative
+        minHeight: '150px',
+        position: 'relative', 
+        overflow: 'hidden',
+    };
+
+    // Estilo para el contenedor del PDF/Imagen
+    const mediaContainerStyle = {
+        ...baseMediaContainerStyle,
+        padding: '0px', // Quitamos el padding para el iframe
+        backgroundColor: 'transparent', 
+        border: 'none',
+        overflow: 'hidden', 
+        maxHeight: '650px', 
     };
     
-    const imageStyle = {
-        maxWidth: '100%', 
-        height: 'auto', 
-        maxHeight: '400px', 
-        borderRadius: '6px',
-        objectFit: 'contain',
-        backgroundColor: 'transparent',
-        zIndex: 0,
-    };
-    
+    // Estilos de audio/video
     const audioContainerStyle = {
         marginTop: '20px',
         width: '100%',
@@ -125,7 +131,7 @@ export default function ScoreModal({ score, onClose }) {
         backgroundColor: theme === 'dark' ? DORADO_SUAVE : GRANATE_OSCURO, 
         borderRadius: '8px',
         padding: '5px',
-    }
+    };
     // -------------------------------------------------------------
 
 
@@ -138,21 +144,42 @@ export default function ScoreModal({ score, onClose }) {
 
                 <h2 style={titleStyle}>{score.title}</h2>
                 
-                {/* 1. Muestra la imagen de la partitura */}
+                {/* ========================================================= */}
+                {/* 1. LECTOR PDF NATIVO (IFRAME) o IMAGEN (IMG) */}
+                {/* ========================================================= */}
                 {score.imageUrl && (
-                    <div style={imageContainerStyle}>
+                    <div style={mediaContainerStyle}>
                         
-                        {/* 🚨 BLOQUE DE MARCA DE AGUA ELIMINADO 🚨 */}
-
-                        <iframe
-                            src={score.imageUrl} 
-                            alt={`Imagen de ${score.title}`} 
-                            style={imageStyle}
-                            onError={(e) => { 
-                                e.target.style.display = 'none'; 
-                                console.error(`Error al cargar la imagen: ${score.imageUrl}`);
-                            }}
-                        />
+                        {isPdf ? (
+                            // 🛑 REVERSIÓN A IFRAME: Usa el lector PDF predeterminado
+                            <iframe
+                                src={score.imageUrl} // <-- Usa la URL pública directamente
+                                width="100%"
+                                height="650px"
+                                style={{ 
+                                    border: 'none', 
+                                    borderRadius: '8px',
+                                }}
+                                title={`Partitura PDF de ${score.title}`}
+                            />
+                        ) : (
+                            // Fallback para imágenes estáticas (PNG, JPG)
+                            <img
+                                src={score.imageUrl}
+                                alt={`Partitura de ${score.title}`} 
+                                style={{
+                                    maxWidth: '100%', 
+                                    height: 'auto', 
+                                    maxHeight: '650px', // Ajustado a la altura máxima del iframe
+                                    borderRadius: '6px',
+                                    objectFit: 'contain',
+                                }}
+                                onError={(e) => { 
+                                    e.target.style.display = 'none'; 
+                                    console.error(`Error al cargar la imagen: ${score.imageUrl}`);
+                                }}
+                            />
+                        )}
                     </div>
                 )}
                 
